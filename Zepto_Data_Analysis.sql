@@ -1,4 +1,4 @@
-drop table  if exists zepto;
+--Creating a table with required datatypes
 
 create table zepto(
 sku_id SERIAL PRIMARY KEY,
@@ -17,15 +17,17 @@ alter  sequence zepto_sku_id_seq restart with 1;
 
 --Data Exploration
 
---count of rows
+--Count of rows
 
 select count(*) from zepto;
 
---sample data
+--Sample data
+
 select * from zepto
 limit 10;
 
---null values
+--Null values
+
 select * from zepto
 where name is null
 or
@@ -45,19 +47,19 @@ outofstock is null
 or
 quantity is null;
 
---different categories of product
+--Different categories of product
 
 select distinct category
 from zepto
 order by category;
 
---products in stock vs products out of stock
+--Products in stock vs products out of stock
 
 select outofstock, count(sku_id)
 from zepto
 group by outofstock;
 
---products names present multiple times
+--Products names present multiple times
 
 select name, count(sku_id) as "Number of SKUs"
 from zepto
@@ -66,9 +68,9 @@ having count(sku_id) >1
 order by count(sku_id) desc;
 
 
---data cleaning
+--Data cleaning
 
---products with price = 0
+--Extracting the Products with price = 0
 
 select * from zepto
 where mrp = 0 or discountedsellingprice = 0;
@@ -76,7 +78,7 @@ where mrp = 0 or discountedsellingprice = 0;
 delete from zepto 
 where mrp =0;
 
---converting paise to rupees
+--Converting paise to rupees
 
 update zepto
 set mrp =mrp/100.0,
@@ -99,6 +101,7 @@ where outofstock = true and mrp >300
 order by mrp desc;
 
 --Q3. Calculate Estimated Revenue for each category
+
 select category,
 sum(discountedsellingprice * availablequantity) as total_revenue
 from zepto
@@ -113,6 +116,7 @@ where mrp > 500 and discountpercent < 10
 order by mrp desc, discountpercent desc;
 
 --Q5. Identify the top 5 categories offering the highest average highest percentage.
+
 select category,
 round(avg(discountpercent),2)as avg_discount
 from zepto
@@ -144,4 +148,5 @@ select category,
 sum(weightingms * availablequantity) as total_weight
 from zepto
 group by category
+
 order by total_weight;
